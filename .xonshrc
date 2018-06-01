@@ -1,0 +1,62 @@
+
+import time
+
+# Useful functions
+def returnCode():
+    '''Gives a return code based on last command issued.
+       If there was no command (e.g. launch), will return 0.'''
+    try:
+        rtn = _.rtn
+        return rtn
+    except:
+        return 0
+
+def gitTag():
+    '''Supplies proper formatting for the current git branch.'''
+    try:
+        if $PROMPT_FIELDS['gitstatus']():
+            return '(' + $PROMPT_FIELDS['branch_color']() + $PROMPT_FIELDS['gitstatus']() + '{NO_COLOR})'
+        elif $PROMPT_FIELDS['curr_branch']():
+            return '(' + $PROMPT_FIELDS['branch_color']() + $PROMPT_FIELDS['curr_branch']() + '{NO_COLOR})'
+        else:
+            return ''
+    except Exception as e:
+        $ERRMSG = e
+        return '☹'
+
+def tracebackOn():
+    $XONSH_SHOW_TRACEBACK = True
+
+def importLocal():
+    import sys
+    sys.path.append($(pwd).strip())
+
+# Prompt settings
+$PROMPT_FIELDS['current_time'] = lambda: time.strftime("%H:%M:%S")
+$PROMPT_FIELDS['retcolor']     = lambda: '{BOLD_GREEN}' if returnCode() == 0 else '{BOLD_RED}'
+$PROMPT_FIELDS['git_tag']      = lambda: gitTag()
+
+$PROMPT='[{BOLD_CYAN}{current_time}{NO_COLOR}] {env_name:{} }{BOLD_PURPLE}{user}{#baddad}@{YELLOW}{hostname}{BOLD_BLUE} {cwd} {NO_COLOR}{git_tag}{retcolor}{prompt_end}{NO_COLOR} '
+
+
+# Aliases
+aliases['gg'] = 'git gui'
+aliases['gp'] = 'git pull'
+aliases['gf'] = 'git fetch'
+aliases['gx'] = 'git push'
+aliases['gco'] = 'git checkout'
+aliases['g'] = 'git status -sb'
+aliases['gd'] = 'git diff'
+aliases['sl'] = 'ls'
+aliases['LS'] = 'ls'
+aliases['gs'] = 'git stash'
+aliases['gsp'] = 'git stash pop'
+
+aliases['ll'] = 'ls -alF'
+
+aliases['tbon'] = lambda: tracebackOn()
+aliases['appwd'] = lambda: importLocal()
+
+# Paths
+$LD_LIBRARY_PATH = ['/usr/local/lib', '/usr/lib', '/opt/anaconda3/lib/']
+
